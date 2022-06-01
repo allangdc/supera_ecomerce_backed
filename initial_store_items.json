@@ -1,0 +1,110 @@
+[
+    {
+        "model": "store_items.storeitems",
+        "pk": 1,
+        "fields": {
+            "name": "Horizon Zero Dawn",
+            "price": 115.8,
+            "score": 290,
+            "image": "games_cover/horizon-zero-dawn.png",
+            "created_at": "2022-06-01T02:58:20.731Z",
+            "updated_at": "2022-06-01T02:58:20.731Z"
+        }
+    },
+    {
+        "model": "store_items.storeitems",
+        "pk": 2,
+        "fields": {
+            "name": "Super Mario Odyssey",
+            "price": 197.88,
+            "score": 100,
+            "image": "games_cover/super-mario-odyssey.png",
+            "created_at": "2022-06-01T02:58:20.731Z",
+            "updated_at": "2022-06-01T02:58:20.731Z"
+        }
+    },
+    {
+        "model": "store_items.storeitems",
+        "pk": 3,
+        "fields": {
+            "name": "Call Of Duty Infinite Warfare",
+            "price": 49.99,
+            "score": 80,
+            "image": "games_cover/call-of-duty-infinite-warfare.png",
+            "created_at": "2022-06-01T02:58:20.731Z",
+            "updated_at": "2022-06-01T02:58:20.731Z"
+        }
+    },
+    {
+        "model": "store_items.storeitems",
+        "pk": 4,
+        "fields": {
+            "name": "The Witcher III Wild Hunt",
+            "price": 119.5,
+            "score": 250,
+            "image": "games_cover/the-witcher-iii-wild-hunt.png",
+            "created_at": "2022-06-01T02:58:20.731Z",
+            "updated_at": "2022-06-01T02:58:20.731Z"
+        }
+    },
+    {
+        "model": "store_items.storeitems",
+        "pk": 5,
+        "fields": {
+            "name": "Call Of Duty WWII",
+            "price": 249.99,
+            "score": 205,
+            "image": "games_cover/call-of-duty-wwii.png",
+            "created_at": "2022-06-01T02:58:20.731Z",
+            "updated_at": "2022-06-01T02:58:20.731Z"
+        }
+    },
+    {
+        "model": "store_items.storeitems",
+        "pk": 6,
+        "fields": {
+            "name": "Mortal Kombat XL",
+            "price": 69.99,
+            "score": 150,
+            "image": "games_cover/mortal-kombat-xl.png",
+            "created_at": "2022-06-01T02:58:20.731Z",
+            "updated_at": "2022-06-01T02:58:20.731Z"
+        }
+    },
+    {
+        "model": "store_items.storeitems",
+        "pk": 7,
+        "fields": {
+            "name": "Shards of Darkness",
+            "price": 71.94,
+            "score": 400,
+            "image": "games_cover/shards-of-darkness.png",
+            "created_at": "2022-06-01T02:58:20.731Z",
+            "updated_at": "2022-06-01T02:58:20.731Z"
+        }
+    },
+    {
+        "model": "store_items.storeitems",
+        "pk": 8,
+        "fields": {
+            "name": "Terra Média: Sombras de Mordor",
+            "price": 79.99,
+            "score": 50,
+            "image": "games_cover/terra-media-sombras-de-mordor.png",
+            "created_at": "2022-06-01T02:58:20.731Z",
+            "updated_at": "2022-06-01T02:58:20.731Z"
+        }
+    },
+    {
+        "model": "store_items.storeitems",
+        "pk": 9,
+        "fields": {
+            "name": "FIFA 18",
+            "price": 195.39,
+            "score": 325,
+            "image": "games_cover/fifa-18.png",
+            "created_at": "2022-06-01T02:58:20.731Z",
+            "updated_at": "2022-06-01T02:58:20.731Z"
+        }
+    }
+]

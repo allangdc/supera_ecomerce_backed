@@ -12,5 +12,8 @@
     python manage.py makemigrations
     python manage.py migrate
 
+### Load initial data
+    python manage.py loaddata initial_store_items.json
+
 ### Start server
     python manage.py runserver

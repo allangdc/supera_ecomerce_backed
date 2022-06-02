@@ -2,6 +2,7 @@ from rest_framework.test import APITestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from store_items.models import StoreItems
+from django.contrib.auth.models import User
 from django.conf import settings
 import os
 
@@ -15,7 +16,16 @@ class StoreItemsApiTest(APITestCase):
     gifname = "file_test"
     url = '/api/v1/store-items/'
 
+    @classmethod
+    def setUpClass(cls):
+        super(StoreItemsApiTest, cls).setUpClass()
+        user = User.objects.create_superuser(
+            username='admin', password='admin')
+        user = User.objects.create_user(username='guest', password='guest')
+
     def setUp(self):
+        ret = self.client.login(username="admin", password="admin")
+
         image = SimpleUploadedFile(
             "{0}.gif".format(self.gifname), self.small_gif, content_type="image/gif")
         response = self.client.post(self.url, {
@@ -34,6 +44,8 @@ class StoreItemsApiTest(APITestCase):
         # Deleting the temp record
         response = self.client.delete(url_delete)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        self.client.logout()
 
     def test_get_allitems(self):
         response = self.client.get(self.url, format='json')

@@ -22,5 +22,6 @@ from store_items.urls import store_items_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/v1/store-items/', include(store_items_router.urls))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

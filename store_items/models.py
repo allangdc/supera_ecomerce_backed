@@ -35,3 +35,13 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
     """
     if not instance.pk:
         return False
+    
+    try:
+        old_image = StoreItems.objects.get(pk=instance.pk).image
+    except StoreItems.DoesNotExist:
+        return False
+
+    new_image = instance.image
+    if not old_image == new_image:
+        if os.path.isfile(old_image.path):
+            os.remove(old_image.path)

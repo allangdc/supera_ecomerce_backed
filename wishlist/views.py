@@ -2,6 +2,8 @@ from rest_framework import viewsets, mixins
 from wishlist.models import Status, Wishlist
 from wishlist.serializer import StatusSerializer, WishlistSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
+from django.db.models import Q
 
 
 class StatusViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -21,4 +23,11 @@ class WishlistViewset(viewsets.ModelViewSet):
         return query
 
     def perform_create(self, serializer):
-        serializer.save(id_user=self.request.user)
+        st = Status.objects.filter(name="Pending").first()
+        ret = Wishlist.objects.filter(
+            Q(status=st) & Q(id_user=self.request.user))
+        if not ret:
+            serializer.save(id_user=self.request.user)
+        else:
+            raise ValidationError(
+                "Cannot create a wishlist if there is a pending list.")

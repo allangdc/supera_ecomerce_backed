@@ -3,6 +3,8 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from wishlist.models import Wishlist, Status
 
+STATUS_PENDING = "Pending"
+STATUS_FINISHED = "Finished"
 
 class StatusApiTest(APITestCase):
     fixtures = ["wishlist_status.json"]
@@ -47,7 +49,7 @@ class WishlistApiTest(APITestCase):
         super(WishlistApiTest, cls).setUpClass()
 
     def setUp(self):
-        st = Status.objects.get(id=1)
+        st = Status.objects.get(name=STATUS_FINISHED)
         usr1 = User.objects.get(username="user1")
         usr2 = User.objects.get(username="user2")
         Wishlist.objects.create(
@@ -88,20 +90,22 @@ class WishlistApiTest(APITestCase):
 
     def test_post_wishlist_not_logged(self):
         # User not logged cannot write to table.
+        st = Status.objects.get(name=STATUS_PENDING)
         res = self.client.post(self.url_wishlist, {
             "shipping_price": 500,
             "purchase_date": None,
-            "status": 1
+            "status": st.id
         }, format="json")
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_post_wishlist_logged_user1(self):
         # User logged can write and check if the id_user field has been linked correctly.
         usr = self.loginUser1()
+        st = Status.objects.get(name=STATUS_PENDING)
         res = self.client.post(self.url_wishlist, {
             "shipping_price": 500,
             "purchase_date": None,
-            "status": 1
+            "status": st.id
         }, format="json")
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.client.logout()
@@ -113,10 +117,11 @@ class WishlistApiTest(APITestCase):
     def test_post_wishlist_logged_user2(self):
         # User logged can write and check if the id_user field has been linked correctly.
         usr = self.loginUser2()
+        st = Status.objects.get(name=STATUS_PENDING)
         res = self.client.post(self.url_wishlist, {
             "shipping_price": 1500,
             "purchase_date": None,
-            "status": 1
+            "status": st.id
         }, format="json")
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.client.logout()
@@ -124,3 +129,33 @@ class WishlistApiTest(APITestCase):
         # Checks if it was created with the correct id_user
         wl = Wishlist.objects.filter(id=res.data["id"]).first()
         self.assertEqual(wl.id_user, usr)
+
+    def test_two_pending_wishlist_error(self):
+        # A wishlist cannot be created if there is already a list with status=pending
+        usr = self.loginUser1()
+        st = Status.objects.get(name=STATUS_PENDING)
+        res = self.client.post(self.url_wishlist, {
+            "shipping_price": 1500,
+            "purchase_date": None,
+            "status": st.id
+        }, format="json")
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.client.logout()
+
+        usr = self.loginUser2()
+        st = Status.objects.get(name=STATUS_PENDING)
+        res = self.client.post(self.url_wishlist, {
+            "shipping_price": 1500,
+            "purchase_date": None,
+            "status": st.id
+        }, format="json")
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        # User2 already has a pending wishlist.
+        res = self.client.post(self.url_wishlist, {
+            "shipping_price": 2500,
+            "purchase_date": None,
+            "status": st.id
+        }, format="json")
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.client.logout()

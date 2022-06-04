@@ -13,7 +13,7 @@
     python manage.py migrate
 
 ### Load initial data
-    python manage.py loaddata initial_store_items.json
+    python manage.py loaddata initial_store_items.json wishlist_status.json
 
 ### Start server
     python manage.py runserver

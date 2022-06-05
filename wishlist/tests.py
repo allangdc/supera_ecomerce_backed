@@ -41,17 +41,10 @@ class WishlistApiTest(APITestCase):
     fixtures = ["wishlist_status.json"]
     url_wishlist = '/api/v1/wishlist/'
 
-    @classmethod
-    def setUpClass(cls):
-        # Creating test users.
-        usera = User.objects.create_user(username='user1', password='user1')
-        userb = User.objects.create_user(username='user2', password='user2')
-        super(WishlistApiTest, cls).setUpClass()
-
     def setUp(self):
+        usr1 = User.objects.create_user(username='user1', password='user1')
+        usr2 = User.objects.create_user(username='user2', password='user2')
         st = Status.objects.get(name=STATUS_FINISHED)
-        usr1 = User.objects.get(username="user1")
-        usr2 = User.objects.get(username="user2")
         Wishlist.objects.create(
             id_user=usr1, shipping_price=50.00, purchase_date=None, status=st)
         Wishlist.objects.create(

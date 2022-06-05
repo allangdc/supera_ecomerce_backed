@@ -19,18 +19,14 @@ class ChoiceItemsApiTest(APITestCase):
         b'\x02\x4c\x01\x00\x3b'
     )
 
-    @classmethod
-    def setUpClass(cls):
-        # Creating test users.
+    def setUp(self) -> None:
         User.objects.create_user(username='user1', password='user1')
         User.objects.create_user(username='user2', password='user2')
-        cls.create_store_item(cls, "item_a")
-        cls.create_store_item(cls, "item_b")
-        cls.create_store_item(cls, "item_c")
-        super(ChoiceItemsApiTest, cls).setUpClass()
+        self.create_store_item("item_a")
+        self.create_store_item("item_b")
+        self.create_store_item("item_c")
 
-    @classmethod
-    def tearDownClass(cls):
+    def tearDown(self) -> None:
         items = StoreItems.objects.all()
         items.delete()
 
@@ -60,10 +56,6 @@ class ChoiceItemsApiTest(APITestCase):
         choice_item = ChoiceItems.objects.create(
             id_item=store_item, id_wishlist=wishlist)
         return choice_item, store_item, wishlist
-
-    def tearDown(self) -> None:
-        items = ChoiceItems.objects.all()
-        items.delete()
 
     def test_get_choice_item_user_logged(self):
         citem, sitem, wsl = self.create_choice_item("user1", "item_b")

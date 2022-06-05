@@ -41,8 +41,11 @@ class ChoiceItemsViewSet(viewsets.ModelViewSet):
     def recalc_shipping(self, wishlist: Wishlist):
         citem = self.get_queryset().filter(id_wishlist=wishlist)
         result = citem.aggregate(sum=Sum("id_item__price"), total=Count("id"))
-        if result["sum"] >= FREE_SHIPPING:
+        if round(result["sum"], 2) >= FREE_SHIPPING:
             wishlist.shipping_price = 0
         else:
-            wishlist.shipping_price = result["total"] * ADDITIONAL_SHIPPING
+            wishlist.shipping_price = round(
+                result["total"] * ADDITIONAL_SHIPPING, 2)
+        wishlist.total_items = result["total"]
+        wishlist.total_price = round(result["sum"], 2)
         wishlist.save()

@@ -27,7 +27,7 @@ class WishlistViewset(viewsets.ModelViewSet):
         ret = Wishlist.objects.filter(
             Q(status=st) & Q(id_user=self.request.user))
         if not ret:
-            serializer.save(id_user=self.request.user, shipping_price=0)
+            serializer.save(id_user=self.request.user)
         else:
             raise ValidationError(
                 "Cannot create a wishlist if there is a pending list.")

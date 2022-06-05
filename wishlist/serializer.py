@@ -11,7 +11,9 @@ class StatusSerializer(serializers.ModelSerializer):
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
-        fields = ["id", "shipping_price", "purchase_date",
+        fields = ["id", "shipping_price", "total_items", "total_price", "purchase_date",
                   "created_at", "updated_at", "id_user", "status"]
         extra_kwargs = {'id_user': {'read_only': True},
-                        'shipping_price': {'read_only': True}}
+                        'shipping_price': {'read_only': True},
+                        'total_items': {'read_only': True},
+                        'total_price': {'read_only': True}}

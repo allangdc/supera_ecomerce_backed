@@ -2,8 +2,10 @@ from rest_framework import viewsets, mixins
 from wishlist.models import Status, Wishlist
 from wishlist.serializer import StatusSerializer, WishlistSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotFound
 from django.db.models import Q
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 
 class StatusViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -41,3 +43,14 @@ class WishlistViewset(viewsets.ModelViewSet):
             return super().perform_update(serializer)
         raise ValidationError(
             "It is not possible to finalize a wish list without a purchase date.")
+
+    # Route to bring up the wishlist that is pending.
+    @action(detail=False,  methods=['get'])
+    def pending(self, request):
+        st = Status.objects.get(name="Pending")
+        try:
+            wishlist_pending = self.get_queryset().get(status=st)
+            serializer = self.get_serializer(wishlist_pending, many=False)
+            return Response(serializer.data)
+        except:
+            raise NotFound()

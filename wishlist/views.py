@@ -31,3 +31,13 @@ class WishlistViewset(viewsets.ModelViewSet):
         else:
             raise ValidationError(
                 "Cannot create a wishlist if there is a pending list.")
+
+    def perform_update(self, serializer):
+        finish_status = Status.objects.get(name="Finished")
+        purchase_date = serializer.validated_data.get("purchase_date")
+        status = serializer.validated_data.get("status")
+
+        if purchase_date is not None or status != finish_status:
+            return super().perform_update(serializer)
+        raise ValidationError(
+            "It is not possible to finalize a wish list without a purchase date.")

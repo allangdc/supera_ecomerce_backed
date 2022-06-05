@@ -1,4 +1,3 @@
-from urllib import response
 from rest_framework.test import APITestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
@@ -17,15 +16,10 @@ class StoreItemsApiTest(APITestCase):
     generic_item = "TestStoreItem"
     url = '/api/v1/store-items/'
 
-    @classmethod
-    def setUpClass(cls):
-        # Creating test users.
+    def setUp(self):
         user = User.objects.create_superuser(
             username='admin', password='admin')
         user = User.objects.create_user(username='guest', password='guest')
-        super(StoreItemsApiTest, cls).setUpClass()
-
-    def setUp(self):
         img = SimpleUploadedFile("{0}.gif".format(
             self.generic_item), self.small_gif, content_type="image/gif")
         item = StoreItems.objects.create(

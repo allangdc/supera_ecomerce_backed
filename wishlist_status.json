@@ -1,0 +1,16 @@
+[
+    {
+        "model": "wishlist.status",
+        "pk": 1,
+        "fields": {
+            "name": "Pending"
+        }
+    },
+    {
+        "model": "wishlist.status",
+        "pk": 2,
+        "fields": {
+            "name": "Finished"
+        }
+    }
+]

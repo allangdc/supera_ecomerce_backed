@@ -41,13 +41,13 @@ class ChoiceItemsApiTest(APITestCase):
     def create_wishlist(self, username, status):
         usr = User.objects.get(username=username)
         st = Status.objects.get(name=status)
-        return Wishlist.objects.create(id_user=usr, shipping_price=100.25,
+        return Wishlist.objects.create(id_user=usr, shipping_price=0,
                                        purchase_date=None, status=st)
 
     def create_store_item(self, itemname):
         img = SimpleUploadedFile("{0}.gif".format(
             itemname), self.small_gif, content_type="image/gif")
-        return StoreItems.objects.create(name=itemname, price=125.25, score=200,
+        return StoreItems.objects.create(name=itemname, price=83.60, score=200,
                                          image=img)
 
     def create_choice_item(self, username, itemname):
@@ -116,3 +116,47 @@ class ChoiceItemsApiTest(APITestCase):
         }, format="json")
         self.client.logout()
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+    def get_wishlist_shipping(self, wishlist_id):
+        ck_wishlist = Wishlist.objects.get(id=wishlist_id)
+        return ck_wishlist.shipping_price
+
+    def test_shipping(self):
+        # pre-adding item from another user
+        self.create_choice_item("user2", "item_b")
+
+        # Now adding user1 items
+        wsl = self.create_wishlist("user1", STATUS_PENDING)
+        sitem = StoreItems.objects.get(name="item_a")  # price=83.60
+        self.loginUser1()
+        # 1st
+        res1 = self.client.post(self.url_choice_items, {
+                               "id_item": sitem.id, "id_wishlist": wsl.id}, format="json")
+        self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.get_wishlist_shipping(wsl.id), 10)  # Total=83.60
+
+        # 2nd
+        res2 = self.client.post(self.url_choice_items, {
+                               "id_item": sitem.id, "id_wishlist": wsl.id}, format="json")
+        self.assertEqual(res2.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.get_wishlist_shipping(wsl.id), 20)  # Total=167.2
+
+        # 3nd
+        res3 = self.client.post(self.url_choice_items, {
+                               "id_item": sitem.id, "id_wishlist": wsl.id}, format="json")
+        self.assertEqual(res3.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.get_wishlist_shipping(wsl.id), 0)  # Total=250.8
+
+        # Removing items to test
+        url_delete_item = "{}{}/".format(self.url_choice_items, res2.data["id"])
+        res = self.client.delete(url_delete_item)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(self.get_wishlist_shipping(wsl.id), 20)  # Total=167.2
+
+        url_delete_item = "{}{}/".format(self.url_choice_items, res1.data["id"])
+        res = self.client.delete(url_delete_item)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(self.get_wishlist_shipping(wsl.id), 10)  # Total=83.60
+
+        self.client.logout()

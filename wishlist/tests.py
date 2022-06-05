@@ -6,6 +6,7 @@ from wishlist.models import Wishlist, Status
 STATUS_PENDING = "Pending"
 STATUS_FINISHED = "Finished"
 
+
 class StatusApiTest(APITestCase):
     fixtures = ["wishlist_status.json"]
     url_status = '/api/v1/wishlist/status/'
@@ -46,11 +47,11 @@ class WishlistApiTest(APITestCase):
         usr2 = User.objects.create_user(username='user2', password='user2')
         st = Status.objects.get(name=STATUS_FINISHED)
         Wishlist.objects.create(
-            id_user=usr1, shipping_price=50.00, purchase_date=None, status=st)
+            id_user=usr1, shipping_price=0, purchase_date=None, status=st)
         Wishlist.objects.create(
-            id_user=usr1, shipping_price=100.25, purchase_date=None, status=st)
+            id_user=usr1, shipping_price=0, purchase_date=None, status=st)
         Wishlist.objects.create(
-            id_user=usr2, shipping_price=200.75, purchase_date=None, status=st)
+            id_user=usr2, shipping_price=0, purchase_date=None, status=st)
 
     def loginUser1(self):
         self.client.login(username="user1", password="user1")
@@ -81,22 +82,20 @@ class WishlistApiTest(APITestCase):
         self.assertEqual(len(res.data), 1)
         self.client.logout()
 
-    def test_post_wishlist_not_logged(self):
+    def test_create_wishlist_not_logged(self):
         # User not logged cannot write to table.
         st = Status.objects.get(name=STATUS_PENDING)
         res = self.client.post(self.url_wishlist, {
-            "shipping_price": 500,
             "purchase_date": None,
             "status": st.id
         }, format="json")
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_post_wishlist_logged_user1(self):
+    def test_create_wishlist_logged_user1(self):
         # User logged can write and check if the id_user field has been linked correctly.
         usr = self.loginUser1()
         st = Status.objects.get(name=STATUS_PENDING)
         res = self.client.post(self.url_wishlist, {
-            "shipping_price": 500,
             "purchase_date": None,
             "status": st.id
         }, format="json")
@@ -107,12 +106,11 @@ class WishlistApiTest(APITestCase):
         wl = Wishlist.objects.filter(id=res.data["id"]).first()
         self.assertEqual(wl.id_user, usr)
 
-    def test_post_wishlist_logged_user2(self):
+    def test_create_wishlist_logged_user2(self):
         # User logged can write and check if the id_user field has been linked correctly.
         usr = self.loginUser2()
         st = Status.objects.get(name=STATUS_PENDING)
         res = self.client.post(self.url_wishlist, {
-            "shipping_price": 1500,
             "purchase_date": None,
             "status": st.id
         }, format="json")
@@ -123,12 +121,22 @@ class WishlistApiTest(APITestCase):
         wl = Wishlist.objects.filter(id=res.data["id"]).first()
         self.assertEqual(wl.id_user, usr)
 
-    def test_two_pending_wishlist_error(self):
+    def test_create_wishlist_shipping_must_be_0(self):
+        usr = self.loginUser1()
+        st = Status.objects.get(name=STATUS_PENDING)
+        res = self.client.post(self.url_wishlist, {
+            "purchase_date": None,
+            "status": st.id
+        }, format="json")
+        self.client.logout()
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data["shipping_price"], 0)
+
+    def test_error_two_pending_wishlist(self):
         # A wishlist cannot be created if there is already a list with status=pending
         usr = self.loginUser1()
         st = Status.objects.get(name=STATUS_PENDING)
         res = self.client.post(self.url_wishlist, {
-            "shipping_price": 1500,
             "purchase_date": None,
             "status": st.id
         }, format="json")
@@ -138,7 +146,6 @@ class WishlistApiTest(APITestCase):
         usr = self.loginUser2()
         st = Status.objects.get(name=STATUS_PENDING)
         res = self.client.post(self.url_wishlist, {
-            "shipping_price": 1500,
             "purchase_date": None,
             "status": st.id
         }, format="json")
@@ -146,7 +153,6 @@ class WishlistApiTest(APITestCase):
 
         # User2 already has a pending wishlist.
         res = self.client.post(self.url_wishlist, {
-            "shipping_price": 2500,
             "purchase_date": None,
             "status": st.id
         }, format="json")

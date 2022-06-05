@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 
 from store_items.urls import store_items_router
 from wishlist.urls import wishlist_router, status_router
+from choice_items.urls import choice_item_routes
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +28,6 @@ urlpatterns = [
     
     path('api/v1/store-items/', include(store_items_router.urls)),
     path('api/v1/wishlist/status/', include(status_router.urls)),
-    path('api/v1/wishlist/', include(wishlist_router.urls))
+    path('api/v1/wishlist/', include(wishlist_router.urls)),
+    path('api/v1/choice-items/', include(choice_item_routes.urls))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

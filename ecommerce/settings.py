@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # Local
     'store_items',
     'wishlist',
+    'choice_items',
 ]
 
 REST_FRAMEWORK = {

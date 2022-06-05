@@ -4,9 +4,11 @@ backports.zoneinfo==0.2.1
 coverage==6.4
 Django==4.0.4
 djangorestframework==3.13.1
+djangorestframework-simplejwt==5.2.0
 Pillow==9.1.1
 psycopg2==2.9.3
 pycodestyle==2.8.0
+PyJWT==2.4.0
 python-dotenv==0.20.0
 pytz==2022.1
 sqlparse==0.4.2

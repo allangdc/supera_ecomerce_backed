@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView, TokenRefreshView, TokenBlacklistView)
 
 from store_items.urls import store_items_router
 from wishlist.urls import wishlist_router, status_router
@@ -25,7 +27,11 @@ from choice_items.urls import choice_item_routes
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    
+
+    path("api/v1/login/", TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path("api/v1/refresh-token/", TokenRefreshView.as_view(), name='token_refresh'),
+    path("api/v1/logout/", TokenBlacklistView.as_view(), name='token_blacklist'),
+
     path('api/v1/store-items/', include(store_items_router.urls)),
     path('api/v1/wishlist/status/', include(status_router.urls)),
     path('api/v1/wishlist/', include(wishlist_router.urls)),

@@ -23,6 +23,7 @@ from rest_framework_simplejwt.views import (
 from store_items.urls import store_items_router
 from wishlist.urls import wishlist_router, status_router
 from choice_items.urls import choice_item_routes
+from user_info.urls import user_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +32,7 @@ urlpatterns = [
     path("api/v1/login/", TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path("api/v1/refresh-token/", TokenRefreshView.as_view(), name='token_refresh'),
     path("api/v1/logout/", TokenBlacklistView.as_view(), name='token_blacklist'),
+    path("api/v1/user-info/", include(user_router.urls)),
 
     path('api/v1/store-items/', include(store_items_router.urls)),
     path('api/v1/wishlist/status/', include(status_router.urls)),

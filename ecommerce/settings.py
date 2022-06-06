@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'store_items',
     'wishlist',
     'choice_items',
+    'user_info',
 ]
 
 REST_FRAMEWORK = {

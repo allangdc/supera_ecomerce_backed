@@ -158,3 +158,65 @@ class WishlistApiTest(APITestCase):
         }, format="json")
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.client.logout()
+
+    def test_finish_wishlist_with_purchase_date(self):
+        usr = self.loginUser1()
+        st = Status.objects.get(name=STATUS_PENDING)
+        res = self.client.post(self.url_wishlist, {
+            "purchase_date": None,
+            "status": st.id
+        }, format="json")
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        newst = Status.objects.get(name=STATUS_FINISHED)
+        url_update = "{}{}/".format(self.url_wishlist, res.data["id"])
+        newres = self.client.patch(url_update, {
+            "purchase_date": "2022-06-05T10:53:15.949197Z",
+            "status": newst.id
+        }, format="json")
+        self.assertEqual(newres.status_code, status.HTTP_200_OK)
+
+        self.client.logout()
+
+    def test_error_finish_wishlist_without_purchase_date(self):
+        usr = self.loginUser1()
+        st = Status.objects.get(name=STATUS_PENDING)
+        res = self.client.post(self.url_wishlist, {
+            "purchase_date": None,
+            "status": st.id
+        }, format="json")
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        newst = Status.objects.get(name=STATUS_FINISHED)
+        url_update = "{}{}/".format(self.url_wishlist, res.data["id"])
+        newres = self.client.patch(url_update, {
+            "purchase_date": None,
+            "status": newst.id
+        }, format="json")
+        self.assertEqual(newres.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.client.logout()
+
+    def test_pending_wishlist_route(self):
+        url_pending = "{}pending/".format(self.url_wishlist)
+        self.loginUser1()
+        st = Status.objects.get(name=STATUS_PENDING)
+        res = self.client.post(self.url_wishlist, {
+            "purchase_date": None,
+            "status": st.id
+        }, format="json")
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        res_all = self.client.get(self.url_wishlist, format="json")
+        self.assertEqual(res_all.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res_all.data), 3)
+
+        res_pending = self.client.get(url_pending, format="json")
+        self.assertEqual(res_pending.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_pending.data["id"], res.data["id"])
+
+    def test_anyone_pending_wishlist_route(self):
+        url_pending = "{}pending/".format(self.url_wishlist)
+        self.loginUser1()
+        res_pending = self.client.get(url_pending, format="json")
+        self.assertEqual(res_pending.status_code, status.HTTP_404_NOT_FOUND)

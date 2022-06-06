@@ -1,4 +1,3 @@
-from tkinter import CASCADE
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -15,8 +14,8 @@ class Wishlist(models.Model):
     shipping_price = models.FloatField(default=0.0)
     total_price = models.FloatField(default=0.0)
     total_items = models.IntegerField(default=0)
-    purchase_date = models.DateTimeField(null=True, blank=True)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE, default=None)
+    purchase_date = models.DateTimeField(null=True, blank=True, default=None)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
